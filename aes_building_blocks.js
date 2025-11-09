@@ -38,7 +38,7 @@ let msg2 = [msgr1[1], msgr2[1], msgr3[1], msgr4[1]];
 let msg3 = [msgr1[2], msgr2[2], msgr3[2], msgr4[2]];
 let msg4 = [msgr1[3], msgr2[3], msgr3[3], msgr4[3]];
 console.log(msg1);console.log(msg2);console.log(msg3);console.log(msg4);
-
+let message = [msg1,msg2,msg3,msg4];
 //key ascii arrays
 //must be column major order
 for (let i=0; i<strKey.length; i++){
@@ -59,7 +59,7 @@ let key2 = [keyr1[1], keyr2[1], keyr3[1], keyr4[1]];
 let key3 = [keyr1[2], keyr2[2], keyr3[2], keyr4[2]];
 let key4 = [keyr1[3], keyr2[3], keyr3[3], keyr4[3]];
 console.log(key1);console.log(key2);console.log(key3); console.log(key4);
-
+let roundKey = [key1,key2,key3,key4];
 
 //add the round key
 function addRoundKey(msg, key){
@@ -267,11 +267,151 @@ console.log(encMsg);//9Q,¤­§±:#_/
 //for key = "Three One Two On" and msg = "Bruce is Batman!"
 //encrypted msg is: "9¤/±_,#§Q­:"
 
+//final generalized functions on entire message and key:
+export function stringToASCIImatrix(str){
+    let msgr1 = [];
+    let msgr2 = [];
+    let msgr3 = [];
+    let msgr4 = [];
 
-//testing online:
-//AES key (in hex):	
-// 5468726565204f6e652054776f204f6e
-// Input Data (in hex):	
-// 4272756365206973204261746d616e21
-//Encrypted Output(hex):
-// 32d21b49d2a6e4126f758d069e9f8c13
+    //message ascii arrays
+    //must be column major order
+    for (let i = 0; i<str.length; i++){
+        //row major
+        if(i<4)
+            msgr1.push(str.charCodeAt(i));
+        else if(i<8)
+            msgr2.push(str.charCodeAt(i));
+        else if(i<12)
+            msgr3.push(str.charCodeAt(i));
+        else
+            msgr4.push(str.charCodeAt(i));
+    }
+    //convert to column major
+    let msg1 = [msgr1[0], msgr2[0], msgr3[0], msgr4[0]];
+    let msg2 = [msgr1[1], msgr2[1], msgr3[1], msgr4[1]];
+    let msg3 = [msgr1[2], msgr2[2], msgr3[2], msgr4[2]];
+    let msg4 = [msgr1[3], msgr2[3], msgr3[3], msgr4[3]];
+    
+    return [msg1,msg2,msg3,msg4];
+}
+
+
+export function addRoundKeytoMatrix(msg,key){
+    let res = []
+    for(let i = 0; i<msg.length;i++){
+        let row = msg[i];
+        let keyRow = key[i];
+        let newRow = [];
+        newRow = addRoundKey(row, keyRow);
+        res.push(newRow);
+    }
+    return res;
+}
+
+export function substituteBytesofMatrix(msg){
+    let res = [];
+    for(let i = 0; i<msg.length; i++){
+        let row = msg[i];
+        let newRow = [];
+        newRow = subBytes(row);
+        res.push(newRow);
+    }
+    return res;
+}
+
+export function shiftRowsofMatrix(msg){
+    let res = [];
+    for(let i = 0; i<msg.length; i++){
+        let row = msg[i];
+        let newRow = [];
+        newRow = shiftRows(row,i);
+        res.push(newRow);
+    }
+    return res;
+}
+
+export function mixColumnsofMatrix(msg){
+    let mixingMatrix = [mixingMatrix1, mixingMatrix2, mixingMatrix3, mixingMatrix4];
+    let col1 = [msg[0][0], msg[1][0], msg[2][0], msg[3][0]];
+    let col2 = [msg[0][1], msg[1][1], msg[2][1], msg[3][1]];
+    let col3 = [msg[0][2], msg[1][2], msg[2][2], msg[3][2]];
+    let col4 = [msg[0][3], msg[1][3], msg[2][3], msg[3][3]];
+    let mixedCols = [mixColumns(col1,mixingMatrix), 
+        mixColumns(col2,mixingMatrix),
+        mixColumns(col3, mixingMatrix),
+        mixColumns(col4,mixingMatrix)];
+    let msg1mc = [mixedCols[0][0], mixedCols[1][0], mixedCols[2][0], mixedCols[3][0]];
+    let msg2mc = [mixedCols[0][1], mixedCols[1][1], mixedCols[2][1], mixedCols[3][1]];
+    let msg3mc = [mixedCols[0][2], mixedCols[1][2], mixedCols[2][2], mixedCols[3][2]];
+    let msg4mc = [mixedCols[0][3], mixedCols[1][3], mixedCols[2][3], mixedCols[3][3]];
+
+    let res = [msg1mc, msg2mc, msg3mc, msg4mc];
+    return res;
+}
+
+export function ASCIImatrixToString(msg){
+   let col1 = [msg[0][0], msg[1][0], msg[2][0], msg[3][0]];
+   let col2 = [msg[0][1], msg[1][1], msg[2][1], msg[3][1]];
+   let col3 = [msg[0][2], msg[1][2], msg[2][2], msg[3][2]];
+   let col4 = [msg[0][3], msg[1][3], msg[2][3], msg[3][3]];
+
+   let cols = [col1, col2, col3, col4];
+   let ciphertext = "";
+   for( let i = 0; i<cols.length; i++){
+        let col = cols[i];
+        for(let j = 0; j<col.length; j++){
+        ciphertext += String.fromCharCode(col[j]);
+    }
+   }
+   return ciphertext;
+
+}
+
+
+//final tests:
+console.log("Test 1");
+let testMsg = "Two One Nine Two";
+let testKey = "Thats my Kung Fu";
+
+let testMsgMatrix = stringToASCIImatrix(testMsg);
+let testKeyMatrix = stringToASCIImatrix(testKey);
+
+
+let step1 = addRoundKeytoMatrix(testMsgMatrix, testKeyMatrix);
+console.log(step1);
+
+let step2 = substituteBytesofMatrix(step1);
+console.log(step2);
+
+let step3 = shiftRowsofMatrix(step2);
+console.log(step3);
+
+let step4 = mixColumnsofMatrix(step3);
+console.log(step4);
+
+let cipher = ASCIImatrixToString(step4);
+console.log(cipher);
+
+console.log("Test 2");
+let testMsg2 = "Bruce is Batman!";
+let testKey2 = "Three One Two On";
+
+let testMsgMatrix2 = stringToASCIImatrix(testMsg2);
+let testKeyMatrix2 = stringToASCIImatrix(testKey2);
+
+
+let step1_2 = addRoundKeytoMatrix(testMsgMatrix2, testKeyMatrix2);
+console.log(step1_2);
+
+let step2_2 = substituteBytesofMatrix(step1_2);
+console.log(step2_2);
+
+let step3_2 = shiftRowsofMatrix(step2_2);
+console.log(step3_2);
+
+let step4_2 = mixColumnsofMatrix(step3_2);
+console.log(step4_2);
+
+let cipher2 = ASCIImatrixToString(step4_2);
+console.log(cipher2);
