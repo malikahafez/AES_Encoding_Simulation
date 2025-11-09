@@ -170,6 +170,7 @@ function galoisMult(mix,val){
         let res = 0;
         let binValBefore = val.toString(2).padStart(8,'0');
         res = val << 1;
+        res = res & 0xFF; //keep the 8 LSB
         let binValAfter = res.toString(2).padStart(8,'0');
         //if overflow, xor with 0x1b to keep in Galois field
         if(binValBefore[0] == '1' && binValAfter[0] == '0'){
