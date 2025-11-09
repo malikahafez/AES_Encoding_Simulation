@@ -1,49 +1,65 @@
 
 // Check if I need to modify code to take longer messages
-let strMsg = "Bruce is Batman!";//16 characters - 16 bytes - 128 bits
-let strKey = "Three One Two On";//16 characters - 16 bytes - 128 bits
+let strMsg = "Two One Nine Two";//16 characters - 16 bytes - 128 bits
+let strKey = "Thats my Kung Fu";//16 characters - 16 bytes - 128 bits
 console.log("Original Message: " + strMsg);
 console.log("Key: " + strKey);
 
 
 //convert to hex byte arrays for each row:
-let msg1 = [];
-let msg2 = [];
-let msg3 = [];
-let msg4 = [];
+let msgr1 = [];
+let msgr2 = [];
+let msgr3 = [];
+let msgr4 = [];
 
-let key1 = [];
-let key2 = [];
-let key3 = [];
-let key4 = [];
+let keyr1 = [];
+let keyr2 = [];
+let keyr3 = [];
+let keyr4 = [];
 
 //message ascii arrays
+//must be column major order
 for (let i = 0; i<strMsg.length; i++){
     if(i<4)
-        msg1.push(strMsg.charCodeAt(i));
+        msgr1.push(strMsg.charCodeAt(i));
     else if(i<8)
-        msg2.push(strMsg.charCodeAt(i));
+        msgr2.push(strMsg.charCodeAt(i));
     else if(i<12)
-        msg3.push(strMsg.charCodeAt(i));
+        msgr3.push(strMsg.charCodeAt(i));
     else
-        msg4.push(strMsg.charCodeAt(i));
+        msgr4.push(strMsg.charCodeAt(i));
 }
-console.log("Message arrays:");
+console.log("Message arrays (row major):");
+console.log(msgr1);console.log(msgr2);console.log(msgr3);console.log(msgr4);
+
+console.log("Message arrays (column major):");
+let msg1 = [msgr1[0], msgr2[0], msgr3[0], msgr4[0]];
+let msg2 = [msgr1[1], msgr2[1], msgr3[1], msgr4[1]];
+let msg3 = [msgr1[2], msgr2[2], msgr3[2], msgr4[2]];
+let msg4 = [msgr1[3], msgr2[3], msgr3[3], msgr4[3]];
 console.log(msg1);console.log(msg2);console.log(msg3);console.log(msg4);
 
 //key ascii arrays
+//must be column major order
 for (let i=0; i<strKey.length; i++){
     if(i<4)
-        key1.push(strKey.charCodeAt(i));
+        keyr1.push(strKey.charCodeAt(i));
     else if(i<8)
-        key2.push(strKey.charCodeAt(i));
+        keyr2.push(strKey.charCodeAt(i));
     else if(i<12)
-        key3.push(strKey.charCodeAt(i));
+        keyr3.push(strKey.charCodeAt(i));
     else
-        key4.push(strKey.charCodeAt(i));
+        keyr4.push(strKey.charCodeAt(i));
 }
-console.log("Key arrays:");
-console.log(key1);console.log(key2);console.log(key3);console.log(key4);
+console.log("Key arrays (row major):");
+console.log(keyr1);console.log(keyr2);console.log(keyr3);console.log(keyr4);
+console.log("Key arrays (column major):");
+let key1 = [keyr1[0], keyr2[0], keyr3[0], keyr4[0]];
+let key2 = [keyr1[1], keyr2[1], keyr3[1], keyr4[1]];
+let key3 = [keyr1[2], keyr2[2], keyr3[2], keyr4[2]];
+let key4 = [keyr1[3], keyr2[3], keyr3[3], keyr4[3]];
+console.log(key1);console.log(key2);console.log(key3); console.log(key4);
+
 
 //add the round key
 function addRoundKey(msg, key){
@@ -242,6 +258,20 @@ function codeToString(msgmc){
         // console.log("Curr encrypted message: " + encMsg);
     }
 }
-codeToString(msg1mc);codeToString(msg2mc);codeToString(msg3mc);codeToString(msg4mc);
+codeToString(mixedCol1);codeToString(mixedCol2);codeToString(mixedCol3);codeToString(mixedCol4);
 console.log("Encrypted Message: ");
 console.log(encMsg);//9Q,¤­§±:#_/
+//for key = "Thats my Kung Fu" and msg = "Two One Nine Two"
+//encrypted msg is: "ºuôz¤2è@}]" = ba75f47a84a48d32e88d060e1b407d5d (hex)
+
+//for key = "Three One Two On" and msg = "Bruce is Batman!"
+//encrypted msg is: 
+
+
+//testing online:
+//AES key (in hex):	
+// 5468726565204f6e652054776f204f6e
+// Input Data (in hex):	
+// 4272756365206973204261746d616e21
+//Encrypted Output(hex):
+// 32d21b49d2a6e4126f758d069e9f8c13
