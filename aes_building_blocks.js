@@ -116,3 +116,21 @@ console.log(msg1sb);console.log(msg2sb);console.log(msg3sb);console.log(msg4sb);
 console.log("check inverse is correct:");
 msg1isb = invSubBytes(msg1sb);msg2isb = invSubBytes(msg2sb);msg3isb = invSubBytes(msg3sb);msg4isb = invSubBytes(msg4sb);
 console.log(msg1isb);console.log(msg2isb);console.log(msg3isb);console.log(msg4isb);
+
+//Shift rows:
+function shiftRows(msg, row){
+    let res = [];
+    let start = row;
+    for(let i = start; i<msg.length; i++ ){
+        res.push(msg[i]);
+    }
+    for(let j=0; j<start; j++){
+        res.push(msg[j]);
+    }
+    return res;
+}
+msg1sr = shiftRows(msg1sb, 0); msg2sr = shiftRows(msg2sb, 1);msg3sr = shiftRows(msg3sb, 2);msg4sr = shiftRows(msg4sb, 3);
+console.log("After Shifting Rows:");
+console.log(msg1sr);console.log(msg2sr);console.log(msg3sr);console.log(msg4sr);
+
+
