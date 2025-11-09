@@ -227,3 +227,15 @@ let msg4mc = [mixedCol1[3], mixedCol2[3], mixedCol3[3], mixedCol4[3]];
 console.log(msg1mc);console.log(msg2mc);console.log(msg3mc);console.log(msg4mc);
 console.log("Check that mixed columns match the rows:")
 console.log(mixedCol1);console.log(mixedCol2);console.log(mixedCol3);console.log(mixedCol4);
+
+// put encrypted message into string
+let encMsg = "";
+function codeToString(msgmc){
+    for(let i = 0; i<msgmc.length; i++){
+        encMsg += String.fromCharCode(msgmc[i]);
+        // console.log("Curr encrypted message: " + encMsg);
+    }
+}
+codeToString(msg1mc);codeToString(msg2mc);codeToString(msg3mc);codeToString(msg4mc);
+console.log("Encrypted Message: ");
+console.log(encMsg);
