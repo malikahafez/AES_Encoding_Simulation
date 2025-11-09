@@ -182,10 +182,15 @@ function galoisMult(mix,val){
         //multiply by 2 by shifting left
         let res = 0;
         let binValBefore = val.toString(2).padStart(8,'0');
+        // console.log("Value before shift: " + binValBefore);
+        // console.log("MSB: " + binValBefore[0]);
         res = val << 1;
-        let binValAfter = res.toString(2).padStart(8,'0');
+        res = res & 0xFF; //keep the 8 LSB
+        // let binValAfter = res.toString(2).padStart(8,'0');
+        // console.log(binValAfter);
         //if overflow, xor with 0x1b to keep in Galois field
-        if(binValBefore[0] == '1' && binValAfter[0] == '0'){
+        //detect overflow by checking if MSB == 1 before shift
+        if(binValBefore[0] == '1'){
             res = res ^ 0x1b;
         }
         // add value again to multiply by 3
@@ -205,7 +210,9 @@ function mixColumns(col, mixMatrix){
         sum = 0;
         //iterate over columns
         for(let j = 0; j<col.length;j++){
+            // console.log("Mixing " + mixRow[j] + " with " + col[j]);
             sum = sum ^ galoisMult(mixRow[j],col[j]);
+            // console.log("Galois Multiplication:  "+galoisMult(mixRow[j],col[j]));
         }
         res.push(sum);
     }
