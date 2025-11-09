@@ -220,14 +220,15 @@ function mixColumns(col, mixMatrix){
     return res;
 }
 mixedCol1 = mixColumns(col1, mixingMatrix);mixedCol2 = mixColumns(col2, mixingMatrix);mixedCol3 = mixColumns(col3, mixingMatrix);mixedCol4 = mixColumns(col4, mixingMatrix);
-console.log("After Mixing Columns:");
+console.log("After Mixing Columns (columns):")
+console.log(mixedCol1);console.log(mixedCol2);console.log(mixedCol3);console.log(mixedCol4);
+console.log("After Mixing Columns (rows):");
 let msg1mc = [mixedCol1[0], mixedCol2[0], mixedCol3[0], mixedCol4[0]];
 let msg2mc = [mixedCol1[1], mixedCol2[1], mixedCol3[1], mixedCol4[1]];
 let msg3mc = [mixedCol1[2], mixedCol2[2], mixedCol3[2], mixedCol4[2]];
 let msg4mc = [mixedCol1[3], mixedCol2[3], mixedCol3[3], mixedCol4[3]];
 console.log(msg1mc);console.log(msg2mc);console.log(msg3mc);console.log(msg4mc);
-console.log("Check that mixed columns match the rows:")
-console.log(mixedCol1);console.log(mixedCol2);console.log(mixedCol3);console.log(mixedCol4);
+
 
 // put encrypted message into string
 let encMsg = "";
