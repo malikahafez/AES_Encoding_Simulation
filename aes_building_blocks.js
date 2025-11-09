@@ -238,4 +238,4 @@ function codeToString(msgmc){
 }
 codeToString(msg1mc);codeToString(msg2mc);codeToString(msg3mc);codeToString(msg4mc);
 console.log("Encrypted Message: ");
-console.log(encMsg);
+console.log(encMsg);//9ŊƐ,¤ƶƼ±Ɵ:#ńĴƘƂ
