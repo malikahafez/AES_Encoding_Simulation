@@ -73,7 +73,7 @@ function addRoundKey(msg, key){
     }
     return res;
 }
-msg1x = addRoundKey(msg1, key1); msg2x = addRoundKey(msg2, key2);msg3x = addRoundKey(msg3, key3);msg4x = addRoundKey(msg4, key4);
+let msg1x = addRoundKey(msg1, key1); let msg2x = addRoundKey(msg2, key2); let msg3x = addRoundKey(msg3, key3);let msg4x = addRoundKey(msg4, key4);
 console.log("After Adding Round Key:");
 console.log(msg1x);console.log(msg2x);console.log(msg3x);console.log(msg4x);
 
@@ -134,11 +134,11 @@ function invSubBytes(msg){
     }
     return res;
 }
-msg1sb = subBytes(msg1x);msg2sb = subBytes(msg2x);msg3sb = subBytes(msg3x);msg4sb = subBytes(msg4x);
+let msg1sb = subBytes(msg1x);let msg2sb = subBytes(msg2x);let msg3sb = subBytes(msg3x);let msg4sb = subBytes(msg4x);
 console.log("After Substituting Bytes:");
 console.log(msg1sb);console.log(msg2sb);console.log(msg3sb);console.log(msg4sb);
 console.log("check inverse is correct:");
-msg1isb = invSubBytes(msg1sb);msg2isb = invSubBytes(msg2sb);msg3isb = invSubBytes(msg3sb);msg4isb = invSubBytes(msg4sb);
+let msg1isb = invSubBytes(msg1sb);let msg2isb = invSubBytes(msg2sb);let msg3isb = invSubBytes(msg3sb);let msg4isb = invSubBytes(msg4sb);
 console.log(msg1isb);console.log(msg2isb);console.log(msg3isb);console.log(msg4isb);
 
 //Shift rows:
@@ -156,7 +156,7 @@ function shiftRows(msg, row){
     }
     return res;
 }
-msg1sr = shiftRows(msg1sb, 0); msg2sr = shiftRows(msg2sb, 1);msg3sr = shiftRows(msg3sb, 2);msg4sr = shiftRows(msg4sb, 3);
+let msg1sr = shiftRows(msg1sb, 0); let msg2sr = shiftRows(msg2sb, 1);let msg3sr = shiftRows(msg3sb, 2);let msg4sr = shiftRows(msg4sb, 3);
 console.log("After Shifting Rows:");
 console.log(msg1sr);console.log(msg2sr);console.log(msg3sr);console.log(msg4sr);
 
@@ -228,7 +228,7 @@ function mixColumns(col, mixMatrix){
     //iterate over rows
     for(let i=0; i<mixMatrix.length; i++){
         let mixRow = mixMatrix[i];
-        sum = 0;
+        let sum = 0;
         //iterate over columns
         for(let j = 0; j<col.length;j++){
             // console.log("Mixing " + mixRow[j] + " with " + col[j]);
@@ -239,7 +239,7 @@ function mixColumns(col, mixMatrix){
     }
     return res;
 }
-mixedCol1 = mixColumns(col1, mixingMatrix);mixedCol2 = mixColumns(col2, mixingMatrix);mixedCol3 = mixColumns(col3, mixingMatrix);mixedCol4 = mixColumns(col4, mixingMatrix);
+let mixedCol1 = mixColumns(col1, mixingMatrix);let mixedCol2 = mixColumns(col2, mixingMatrix);let mixedCol3 = mixColumns(col3, mixingMatrix);let mixedCol4 = mixColumns(col4, mixingMatrix);
 console.log("After Mixing Columns (columns):")
 console.log(mixedCol1);console.log(mixedCol2);console.log(mixedCol3);console.log(mixedCol4);
 console.log("After Mixing Columns (rows):");
@@ -370,48 +370,48 @@ export function ASCIImatrixToString(msg){
 
 
 //final tests:
-console.log("Test 1");
-let testMsg = "Two One Nine Two";
-let testKey = "Thats my Kung Fu";
+// console.log("Test 1");
+// let testMsg = "Two One Nine Two";
+// let testKey = "Thats my Kung Fu";
 
-let testMsgMatrix = stringToASCIImatrix(testMsg);
-let testKeyMatrix = stringToASCIImatrix(testKey);
-
-
-let step1 = addRoundKeytoMatrix(testMsgMatrix, testKeyMatrix);
-console.log(step1);
-
-let step2 = substituteBytesofMatrix(step1);
-console.log(step2);
-
-let step3 = shiftRowsofMatrix(step2);
-console.log(step3);
-
-let step4 = mixColumnsofMatrix(step3);
-console.log(step4);
-
-let cipher = ASCIImatrixToString(step4);
-console.log(cipher);
-
-console.log("Test 2");
-let testMsg2 = "Bruce is Batman!";
-let testKey2 = "Three One Two On";
-
-let testMsgMatrix2 = stringToASCIImatrix(testMsg2);
-let testKeyMatrix2 = stringToASCIImatrix(testKey2);
+// let testMsgMatrix = stringToASCIImatrix(testMsg);
+// let testKeyMatrix = stringToASCIImatrix(testKey);
 
 
-let step1_2 = addRoundKeytoMatrix(testMsgMatrix2, testKeyMatrix2);
-console.log(step1_2);
+// let step1 = addRoundKeytoMatrix(testMsgMatrix, testKeyMatrix);
+// console.log(step1);
 
-let step2_2 = substituteBytesofMatrix(step1_2);
-console.log(step2_2);
+// let step2 = substituteBytesofMatrix(step1);
+// console.log(step2);
 
-let step3_2 = shiftRowsofMatrix(step2_2);
-console.log(step3_2);
+// let step3 = shiftRowsofMatrix(step2);
+// console.log(step3);
 
-let step4_2 = mixColumnsofMatrix(step3_2);
-console.log(step4_2);
+// let step4 = mixColumnsofMatrix(step3);
+// console.log(step4);
 
-let cipher2 = ASCIImatrixToString(step4_2);
-console.log(cipher2);
+// let cipher = ASCIImatrixToString(step4);
+// console.log(cipher);
+
+// console.log("Test 2");
+// let testMsg2 = "Bruce is Batman!";
+// let testKey2 = "Three One Two On";
+
+// let testMsgMatrix2 = stringToASCIImatrix(testMsg2);
+// let testKeyMatrix2 = stringToASCIImatrix(testKey2);
+
+
+// let step1_2 = addRoundKeytoMatrix(testMsgMatrix2, testKeyMatrix2);
+// console.log(step1_2);
+
+// let step2_2 = substituteBytesofMatrix(step1_2);
+// console.log(step2_2);
+
+// let step3_2 = shiftRowsofMatrix(step2_2);
+// console.log(step3_2);
+
+// let step4_2 = mixColumnsofMatrix(step3_2);
+// console.log(step4_2);
+
+// let cipher2 = ASCIImatrixToString(step4_2);
+// console.log(cipher2);
