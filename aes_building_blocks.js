@@ -170,10 +170,13 @@ function galoisMult(mix,val){
         let res = 0;
         let binValBefore = val.toString(2).padStart(8,'0');
         res = val << 1;
-        res = res & 0xFF; //keep the 8 LSB
+        res = res & 0xFF; //clip to the 8 LSB
+
         let binValAfter = res.toString(2).padStart(8,'0');
+
         //if overflow, xor with 0x1b to keep in Galois field
-        if(binValBefore[0] == '1' && binValAfter[0] == '0'){
+        //detect overflow by checking if MSB == 1 before shift
+        if(binValBefore[0] == '1'){
             res = res ^ 0x1b;
         }
         return res;
@@ -186,11 +189,12 @@ function galoisMult(mix,val){
         // console.log("Value before shift: " + binValBefore);
         // console.log("MSB: " + binValBefore[0]);
         res = val << 1;
-        res = res & 0xFF; //keep the 8 LSB
+        res = res & 0xFF; //clip to the 8 LSB
+
         // let binValAfter = res.toString(2).padStart(8,'0');
         // console.log(binValAfter);
+
         //if overflow, xor with 0x1b to keep in Galois field
-        //detect overflow by checking if MSB == 1 before shift
         if(binValBefore[0] == '1'){
             res = res ^ 0x1b;
         }
@@ -240,4 +244,4 @@ function codeToString(msgmc){
 }
 codeToString(msg1mc);codeToString(msg2mc);codeToString(msg3mc);codeToString(msg4mc);
 console.log("Encrypted Message: ");
-console.log(encMsg);//9ŊƐ,¤ƶƼ±Ɵ:#ńĴƘƂ
+console.log(encMsg);//9Q,¤­§±:#_/
