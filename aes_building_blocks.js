@@ -1,3 +1,5 @@
+
+// modify code to take longer messages
 let strMsg = "Bruce is Batman!";//16 characters - 16 bytes - 128 bits
 let strKey = "Three One Two On";//16 characters - 16 bytes - 128 bits
 console.log("Original Message: " + strMsg);
@@ -15,7 +17,7 @@ let key2 = [];
 let key3 = [];
 let key4 = [];
 
-//message arrays
+//message ascii arrays
 for (let i = 0; i<strMsg.length; i++){
     if(i<4)
         msg1.push(strMsg.charCodeAt(i));
@@ -29,7 +31,7 @@ for (let i = 0; i<strMsg.length; i++){
 console.log("Message arrays:");
 console.log(msg1);console.log(msg2);console.log(msg3);console.log(msg4);
 
-//key arrays
+//key ascii arrays
 for (let i=0; i<strKey.length; i++){
     if(i<4)
         key1.push(strKey.charCodeAt(i));
@@ -45,6 +47,8 @@ console.log(key1);console.log(key2);console.log(key3);console.log(key4);
 
 //add the round key
 function addRoundKey(msg, key){
+    //takes message row and key row
+    //returns resulting row after XORing
     let res = [];
     var xor = 0;
     for(let i=0; i<msg.length; i++){
@@ -97,6 +101,8 @@ const sBoxInv = [
 ]
 
 function subBytes(msg){
+    //takes message row after adding round key
+    //returns resulting row after substituting bytes from sBox
     let res = [];
     for(let i=0; i<msg.length;i++){
         res.push(sBox[msg[i]]);
@@ -104,6 +110,8 @@ function subBytes(msg){
     return res;
 }
 function invSubBytes(msg){
+    //takes message row after substituting bytes
+    //returns resulting row after substituting bytes from inverse sBox
     let res = [];
     for(let i=0; i<msg.length;i++){
         res.push(sBoxInv[msg[i]]);
@@ -118,7 +126,10 @@ msg1isb = invSubBytes(msg1sb);msg2isb = invSubBytes(msg2sb);msg3isb = invSubByte
 console.log(msg1isb);console.log(msg2isb);console.log(msg3isb);console.log(msg4isb);
 
 //Shift rows:
+//cyclic shift left by row index
 function shiftRows(msg, row){
+    //takes message row after substituting bytes and its row index
+    //returns the row after shifting to the left by row index
     let res = [];
     let start = row;
     for(let i = start; i<msg.length; i++ ){
@@ -133,4 +144,79 @@ msg1sr = shiftRows(msg1sb, 0); msg2sr = shiftRows(msg2sb, 1);msg3sr = shiftRows(
 console.log("After Shifting Rows:");
 console.log(msg1sr);console.log(msg2sr);console.log(msg3sr);console.log(msg4sr);
 
+//Mix columns:
+let mixingMatrix1 = [2,3,1,1];
+let mixingMatrix2 = [1,2,3,1];
+let mixingMatrix3 = [1,1,2,3];
+let mixingMatrix4 = [3,1,1,2];
+let mixingMatrix = [mixingMatrix1, mixingMatrix2, mixingMatrix3, mixingMatrix4];
 
+//columns of the shifted matrix
+let col1 = [msg1sr[0], msg2sr[0], msg3sr[0], msg4sr[0]];
+let col2 = [msg1sr[1], msg2sr[1], msg3sr[1], msg4sr[1]];
+let col3 = [msg1sr[2], msg2sr[2], msg3sr[2], msg4sr[2]];
+let col4 = [msg1sr[3], msg2sr[3], msg3sr[3], msg4sr[3]];
+
+function galoisMult(mix,val){
+    //multiply value by mixing matrix value and keeps it in the Galois field
+    if(val == 0 || mix == 0){
+        return 0;
+    }
+    if(mix == 1){
+        return val;
+    }
+    else if (mix == 2){
+        //multiply by 2 by shifting left
+        let res = 0;
+        let binValBefore = val.toString(2).padStart(8,'0');
+        res = val << 1;
+        let binValAfter = res.toString(2).padStart(8,'0');
+        //if overflow, xor with 0x1b to keep in Galois field
+        if(binValBefore[0] == '1' && binValAfter[0] == '0'){
+            res = res ^ 0x1b;
+        }
+        return res;
+    }
+    //mix = 3
+    else{
+        //multiply by 2 by shifting left
+        let res = 0;
+        let binValBefore = val.toString(2).padStart(8,'0');
+        res = val << 1;
+        let binValAfter = res.toString(2).padStart(8,'0');
+        //if overflow, xor with 0x1b to keep in Galois field
+        if(binValBefore[0] == '1' && binValAfter[0] == '0'){
+            res = res ^ 0x1b;
+        }
+        // add value again to multiply by 3
+        res = res ^ val;
+        return res;
+    }
+
+}
+
+function mixColumns(col, mixMatrix){
+    //takes column of shifted matrix and takes entire mixing matrix
+    //returns result column after mixing
+    let res = [];
+    //iterate over rows
+    for(let i=0; i<mixMatrix.length; i++){
+        let mixRow = mixMatrix[i];
+        sum = 0;
+        //iterate over columns
+        for(let j = 0; j<col.length;j++){
+            sum = sum ^ galoisMult(mixRow[j],col[j]);
+        }
+        res.push(sum);
+    }
+    return res;
+}
+mixedCol1 = mixColumns(col1, mixingMatrix);mixedCol2 = mixColumns(col2, mixingMatrix);mixedCol3 = mixColumns(col3, mixingMatrix);mixedCol4 = mixColumns(col4, mixingMatrix);
+console.log("After Mixing Columns:");
+let msg1mc = [mixedCol1[0], mixedCol2[0], mixedCol3[0], mixedCol4[0]];
+let msg2mc = [mixedCol1[1], mixedCol2[1], mixedCol3[1], mixedCol4[1]];
+let msg3mc = [mixedCol1[2], mixedCol2[2], mixedCol3[2], mixedCol4[2]];
+let msg4mc = [mixedCol1[3], mixedCol2[3], mixedCol3[3], mixedCol4[3]];
+console.log(msg1mc);console.log(msg2mc);console.log(msg3mc);console.log(msg4mc);
+console.log("Check that mixed columns match the rows:")
+console.log(mixedCol1);console.log(mixedCol2);console.log(mixedCol3);console.log(mixedCol4);
