@@ -1,5 +1,5 @@
 
-// modify code to take longer messages
+// Check if I need to modify code to take longer messages
 let strMsg = "Bruce is Batman!";//16 characters - 16 bytes - 128 bits
 let strKey = "Three One Two On";//16 characters - 16 bytes - 128 bits
 console.log("Original Message: " + strMsg);
