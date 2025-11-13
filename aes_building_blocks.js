@@ -1,66 +1,6 @@
+//final generalized functions on entire message and key:
 
-// Check if I need to modify code to take longer messages
-let strMsg = "Bruce is Batman!";//16 characters - 16 bytes - 128 bits
-let strKey = "Three One Two On";//16 characters - 16 bytes - 128 bits
-// console.log("Original Message: " + strMsg);
-// console.log("Key: " + strKey);
-
-
-//convert to hex byte arrays for each row:
-let msgr1 = [];
-let msgr2 = [];
-let msgr3 = [];
-let msgr4 = [];
-
-let keyr1 = [];
-let keyr2 = [];
-let keyr3 = [];
-let keyr4 = [];
-
-//message ascii arrays
-//must be column major order
-for (let i = 0; i<strMsg.length; i++){
-    if(i<4)
-        msgr1.push(strMsg.charCodeAt(i));
-    else if(i<8)
-        msgr2.push(strMsg.charCodeAt(i));
-    else if(i<12)
-        msgr3.push(strMsg.charCodeAt(i));
-    else
-        msgr4.push(strMsg.charCodeAt(i));
-}
-// console.log("Message arrays (row major):");
-// console.log(msgr1);console.log(msgr2);console.log(msgr3);console.log(msgr4);
-
-// console.log("Message arrays (column major):");
-// let msg1 = [msgr1[0], msgr2[0], msgr3[0], msgr4[0]];
-// let msg2 = [msgr1[1], msgr2[1], msgr3[1], msgr4[1]];
-// let msg3 = [msgr1[2], msgr2[2], msgr3[2], msgr4[2]];
-// let msg4 = [msgr1[3], msgr2[3], msgr3[3], msgr4[3]];
-// console.log(msg1);console.log(msg2);console.log(msg3);console.log(msg4);
-// let message = [msg1,msg2,msg3,msg4];
-//key ascii arrays
-//must be column major order
-for (let i=0; i<strKey.length; i++){
-    if(i<4)
-        keyr1.push(strKey.charCodeAt(i));
-    else if(i<8)
-        keyr2.push(strKey.charCodeAt(i));
-    else if(i<12)
-        keyr3.push(strKey.charCodeAt(i));
-    else
-        keyr4.push(strKey.charCodeAt(i));
-}
-// console.log("Key arrays (row major):");
-// console.log(keyr1);console.log(keyr2);console.log(keyr3);console.log(keyr4);
-// console.log("Key arrays (column major):");
-// let key1 = [keyr1[0], keyr2[0], keyr3[0], keyr4[0]];
-// let key2 = [keyr1[1], keyr2[1], keyr3[1], keyr4[1]];
-// let key3 = [keyr1[2], keyr2[2], keyr3[2], keyr4[2]];
-// let key4 = [keyr1[3], keyr2[3], keyr3[3], keyr4[3]];
-// console.log(key1);console.log(key2);console.log(key3); console.log(key4);
-// let roundKey = [key1,key2,key3,key4];
-
+//FUNCTIONS ON ROWS
 //add the round key
 function addRoundKey(msg, key){
     //takes message row and key row
@@ -73,9 +13,6 @@ function addRoundKey(msg, key){
     }
     return res;
 }
-// let msg1x = addRoundKey(msg1, key1); let msg2x = addRoundKey(msg2, key2); let msg3x = addRoundKey(msg3, key3);let msg4x = addRoundKey(msg4, key4);
-// console.log("After Adding Round Key:");
-// console.log(msg1x);console.log(msg2x);console.log(msg3x);console.log(msg4x);
 
 //Substitute bytes
 //sbox and inverse sbox from https://asecuritysite.com/subjects/chapter88
@@ -134,12 +71,6 @@ function invSubBytes(msg){
     }
     return res;
 }
-// let msg1sb = subBytes(msg1x);let msg2sb = subBytes(msg2x);let msg3sb = subBytes(msg3x);let msg4sb = subBytes(msg4x);
-// console.log("After Substituting Bytes:");
-// console.log(msg1sb);console.log(msg2sb);console.log(msg3sb);console.log(msg4sb);
-// console.log("check inverse is correct:");
-// let msg1isb = invSubBytes(msg1sb);let msg2isb = invSubBytes(msg2sb);let msg3isb = invSubBytes(msg3sb);let msg4isb = invSubBytes(msg4sb);
-// console.log(msg1isb);console.log(msg2isb);console.log(msg3isb);console.log(msg4isb);
 
 //Shift rows:
 //cyclic shift left by row index
@@ -156,22 +87,13 @@ function shiftRows(msg, row){
     }
     return res;
 }
-// let msg1sr = shiftRows(msg1sb, 0); let msg2sr = shiftRows(msg2sb, 1);let msg3sr = shiftRows(msg3sb, 2);let msg4sr = shiftRows(msg4sb, 3);
-// console.log("After Shifting Rows:");
-// console.log(msg1sr);console.log(msg2sr);console.log(msg3sr);console.log(msg4sr);
 
 //Mix columns:
 let mixingMatrix1 = [2,3,1,1];
 let mixingMatrix2 = [1,2,3,1];
 let mixingMatrix3 = [1,1,2,3];
 let mixingMatrix4 = [3,1,1,2];
-// let mixingMatrix = [mixingMatrix1, mixingMatrix2, mixingMatrix3, mixingMatrix4];
-
-//columns of the shifted matrix
-// let col1 = [msg1sr[0], msg2sr[0], msg3sr[0], msg4sr[0]];
-// let col2 = [msg1sr[1], msg2sr[1], msg3sr[1], msg4sr[1]];
-// let col3 = [msg1sr[2], msg2sr[2], msg3sr[2], msg4sr[2]];
-// let col4 = [msg1sr[3], msg2sr[3], msg3sr[3], msg4sr[3]];
+let mixingMatrix = [mixingMatrix1, mixingMatrix2, mixingMatrix3, mixingMatrix4];
 
 function galoisMult(mix,val){
     //multiply value by mixing matrix value and keeps it in the Galois field
@@ -239,36 +161,8 @@ function mixColumns(col, mixMatrix){
     }
     return res;
 }
-// let mixedCol1 = mixColumns(col1, mixingMatrix);let mixedCol2 = mixColumns(col2, mixingMatrix);let mixedCol3 = mixColumns(col3, mixingMatrix);let mixedCol4 = mixColumns(col4, mixingMatrix);
-// console.log("After Mixing Columns (columns):")
-// console.log(mixedCol1);console.log(mixedCol2);console.log(mixedCol3);console.log(mixedCol4);
-// console.log("After Mixing Columns (rows):");
-// let msg1mc = [mixedCol1[0], mixedCol2[0], mixedCol3[0], mixedCol4[0]];
-// let msg2mc = [mixedCol1[1], mixedCol2[1], mixedCol3[1], mixedCol4[1]];
-// let msg3mc = [mixedCol1[2], mixedCol2[2], mixedCol3[2], mixedCol4[2]];
-// let msg4mc = [mixedCol1[3], mixedCol2[3], mixedCol3[3], mixedCol4[3]];
-// console.log(msg1mc);console.log(msg2mc);console.log(msg3mc);console.log(msg4mc);
 
-
-// put encrypted message into string
-let encMsg = "";
-function codeToString(msgmc){
-    for(let i = 0; i<msgmc.length; i++){
-        encMsg += String.fromCharCode(msgmc[i]);
-        // console.log("Curr encrypted message: " + encMsg);
-    }
-}
-// codeToString(mixedCol1);codeToString(mixedCol2);codeToString(mixedCol3);codeToString(mixedCol4);
-// console.log("Encrypted Message: ");
-// console.log(encMsg);//9Q,¤­§±:#_/
-//for key = "Thats my Kung Fu" and msg = "Two One Nine Two"
-//encrypted msg is: "ºuôz¤2è@}]" = ba75f47a84a48d32e88d060e1b407d5d (hex)
-//or "ºuôz„¤2è@}]" or "�u�z���2�@}]"
-
-//for key = "Three One Two On" and msg = "Bruce is Batman!"
-//encrypted msg is: "9¤/±_,#§Q­:" or "9¤„/±_™,#ƒ‹§ŸQ­:" or "9��/�_�,#����Q�:"
-
-//final generalized functions on entire message and key:
+//EXPORTED FUNCTIONS TO BE USED
 export function paddingIfNeeded(str) {
     //handle emojis too - utf-8
     //takes input string
@@ -313,7 +207,7 @@ export function paddingIfNeeded(str) {
 export function stringToASCIImatrix(str){
     //takes string message, pads it if needed
     //returns the resulting 4x4 matrix/matrices - matrix of matrices
-    const paddedBlocks = paddingIfNeeded(str); // Array of Uint8Array(16)
+    const paddedBlocks = paddingIfNeeded(str); // Array of Uint8Array(16) - padded string in byte form
     console.log("padded blocks: ");
     console.log(paddedBlocks);
     let resMatrices = [];
@@ -446,6 +340,126 @@ export function ASCIImatrixToString(msg){
 
     return ciphertext;
 }
+
+//TESTS
+
+let strMsg = "Bruce is Batman!";//16 characters - 16 bytes - 128 bits
+let strKey = "Three One Two On";//16 characters - 16 bytes - 128 bits
+// console.log("Original Message: " + strMsg);
+// console.log("Key: " + strKey);
+
+
+//convert to hex byte arrays for each row:
+let msgr1 = [];
+let msgr2 = [];
+let msgr3 = [];
+let msgr4 = [];
+
+let keyr1 = [];
+let keyr2 = [];
+let keyr3 = [];
+let keyr4 = [];
+
+//message ascii arrays
+//must be column major order
+for (let i = 0; i<strMsg.length; i++){
+    if(i<4)
+        msgr1.push(strMsg.charCodeAt(i));
+    else if(i<8)
+        msgr2.push(strMsg.charCodeAt(i));
+    else if(i<12)
+        msgr3.push(strMsg.charCodeAt(i));
+    else
+        msgr4.push(strMsg.charCodeAt(i));
+}
+// console.log("Message arrays (row major):");
+// console.log(msgr1);console.log(msgr2);console.log(msgr3);console.log(msgr4);
+
+// console.log("Message arrays (column major):");
+let msg1 = [msgr1[0], msgr2[0], msgr3[0], msgr4[0]];
+let msg2 = [msgr1[1], msgr2[1], msgr3[1], msgr4[1]];
+let msg3 = [msgr1[2], msgr2[2], msgr3[2], msgr4[2]];
+let msg4 = [msgr1[3], msgr2[3], msgr3[3], msgr4[3]];
+// console.log(msg1);console.log(msg2);console.log(msg3);console.log(msg4);
+let message = [msg1,msg2,msg3,msg4];
+//key ascii arrays
+//must be column major order
+for (let i=0; i<strKey.length; i++){
+    if(i<4)
+        keyr1.push(strKey.charCodeAt(i));
+    else if(i<8)
+        keyr2.push(strKey.charCodeAt(i));
+    else if(i<12)
+        keyr3.push(strKey.charCodeAt(i));
+    else
+        keyr4.push(strKey.charCodeAt(i));
+}
+// console.log("Key arrays (row major):");
+// console.log(keyr1);console.log(keyr2);console.log(keyr3);console.log(keyr4);
+// console.log("Key arrays (column major):");
+let key1 = [keyr1[0], keyr2[0], keyr3[0], keyr4[0]];
+let key2 = [keyr1[1], keyr2[1], keyr3[1], keyr4[1]];
+let key3 = [keyr1[2], keyr2[2], keyr3[2], keyr4[2]];
+let key4 = [keyr1[3], keyr2[3], keyr3[3], keyr4[3]];
+// console.log(key1);console.log(key2);console.log(key3); console.log(key4);
+let roundKey = [key1,key2,key3,key4];
+
+
+let msg1x = addRoundKey(msg1, key1); let msg2x = addRoundKey(msg2, key2); let msg3x = addRoundKey(msg3, key3);let msg4x = addRoundKey(msg4, key4);
+// console.log("After Adding Round Key:");
+// console.log(msg1x);console.log(msg2x);console.log(msg3x);console.log(msg4x);
+
+
+let msg1sb = subBytes(msg1x);let msg2sb = subBytes(msg2x);let msg3sb = subBytes(msg3x);let msg4sb = subBytes(msg4x);
+// console.log("After Substituting Bytes:");
+// console.log(msg1sb);console.log(msg2sb);console.log(msg3sb);console.log(msg4sb);
+// console.log("check inverse is correct:");
+let msg1isb = invSubBytes(msg1sb);let msg2isb = invSubBytes(msg2sb);let msg3isb = invSubBytes(msg3sb);let msg4isb = invSubBytes(msg4sb);
+// console.log(msg1isb);console.log(msg2isb);console.log(msg3isb);console.log(msg4isb);
+
+
+let msg1sr = shiftRows(msg1sb, 0); let msg2sr = shiftRows(msg2sb, 1);let msg3sr = shiftRows(msg3sb, 2);let msg4sr = shiftRows(msg4sb, 3);
+// console.log("After Shifting Rows:");
+// console.log(msg1sr);console.log(msg2sr);console.log(msg3sr);console.log(msg4sr);
+
+
+
+//columns of the shifted matrix
+let col1 = [msg1sr[0], msg2sr[0], msg3sr[0], msg4sr[0]];
+let col2 = [msg1sr[1], msg2sr[1], msg3sr[1], msg4sr[1]];
+let col3 = [msg1sr[2], msg2sr[2], msg3sr[2], msg4sr[2]];
+let col4 = [msg1sr[3], msg2sr[3], msg3sr[3], msg4sr[3]];
+
+
+let mixedCol1 = mixColumns(col1, mixingMatrix);let mixedCol2 = mixColumns(col2, mixingMatrix);let mixedCol3 = mixColumns(col3, mixingMatrix);let mixedCol4 = mixColumns(col4, mixingMatrix);
+// console.log("After Mixing Columns (columns):")
+// console.log(mixedCol1);console.log(mixedCol2);console.log(mixedCol3);console.log(mixedCol4);
+// console.log("After Mixing Columns (rows):");
+let msg1mc = [mixedCol1[0], mixedCol2[0], mixedCol3[0], mixedCol4[0]];
+let msg2mc = [mixedCol1[1], mixedCol2[1], mixedCol3[1], mixedCol4[1]];
+let msg3mc = [mixedCol1[2], mixedCol2[2], mixedCol3[2], mixedCol4[2]];
+let msg4mc = [mixedCol1[3], mixedCol2[3], mixedCol3[3], mixedCol4[3]];
+// console.log(msg1mc);console.log(msg2mc);console.log(msg3mc);console.log(msg4mc);
+
+// put encrypted message into string
+let encMsg = "";
+function codeToString(msgmc){
+    for(let i = 0; i<msgmc.length; i++){
+        encMsg += String.fromCharCode(msgmc[i]);
+        // console.log("Curr encrypted message: " + encMsg);
+    }
+}
+codeToString(mixedCol1);codeToString(mixedCol2);codeToString(mixedCol3);codeToString(mixedCol4);
+// console.log("Encrypted Message: ");
+// console.log(encMsg);//9Q,¤­§±:#_/
+//for key = "Thats my Kung Fu" and msg = "Two One Nine Two"
+//encrypted msg is: "ºuôz¤2è@}]" = ba75f47a84a48d32e88d060e1b407d5d (hex)
+//or "ºuôz„¤2è@}]" or "�u�z���2�@}]"
+
+//for key = "Three One Two On" and msg = "Bruce is Batman!"
+//encrypted msg is: "9¤/±_,#§Q­:" or "9¤„/±_™,#ƒ‹§ŸQ­:" or "9��/�_�,#����Q�:"
+
+
 // export function ASCIImatrixToString(matrices) {
 //   const decoder = new TextDecoder();
 //   const bytes = [];
