@@ -38,6 +38,9 @@ console.log("Test 2");
 let testMsg2 = "Bruce is Batman!";
 let testKey2 = "Three One Two On";
 
+console.log("Original Message: " + testMsg2);
+console.log("Key: " + testKey2);
+
 let testMsgMatrices2 = stringToASCIImatrix(testMsg2);
 let testKeyMatrices2 = stringToASCIImatrix(testKey2);
 
