@@ -168,7 +168,7 @@ export function paddingIfNeeded(str) {
     //takes input string
     //checks if it is 16 bytes long
     //if yes, returns array of string and a full padding according to PKCS#7
-    //if shorter, pads the string using PKCS#7 padding defined in rfc 2898 and returns it
+    //if shorter, pads the string using PKCS#7 padding defined in rfc 2315 and returns it
     //if longer, splits the string into multiple strings of 16 byte length (the last one is padded)
     // and returns them in an array
   const encoder = new TextEncoder();
