@@ -184,7 +184,7 @@ export function paddingIfNeeded(str) {
 
     if (chunk.length < blockSize) {
         // PKCS#7 padding: pad with bytes equal to pad length
-      const padLength = blockSize - chunk.length;
+      const padLength = blockSize - (chunk.length % blockSize);
       const padding = new Uint8Array(padLength).fill(padLength);
       const paddedChunk = new Uint8Array([...chunk, ...padding]);
       blocks.push(paddedChunk);
