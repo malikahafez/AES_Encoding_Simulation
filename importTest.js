@@ -1,4 +1,5 @@
 import { paddingIfNeeded,stringToASCIImatrix, addRoundKeytoMatrix, substituteBytesofMatrix, shiftRowsofMatrix, mixColumnsofMatrix, ASCIImatrixToString } from "./aes_building_blocks.js";
+import {runPipeline} from "./aes_pipeline.js";
 console.log("inside tests file");
 console.log("Test 1");
 let testMsg = "Two One Nine Two";
@@ -66,6 +67,21 @@ console.log(step4_2);
 let cipher2 = ASCIImatrixToString(step4_2);
 console.log("Encrypted Message: ");
 console.log(cipher2);
+
+// ---- Pipline Test ----
+console.log("\nPipeline test for Test 1 (AddRoundKey -> SubBytes -> ShiftRows -> MixColumns):");
+const states = runPipeline(testMsgMatrix, testKeyMatrix);
+states.forEach((state, index) => {
+    console.log(`\nState ${index}:`);
+    for (let r = 0; r < 4; r++) {
+        const row = [];
+        for (let c = 0; c < 4; c++) {
+            row.push((state[c][r] ?? 0).toString(16).padStart(2, '0').toUpperCase());
+        }
+        console.log(row.join(' '));
+    }
+});
+
 
 //for key = "Thats my Kung Fu" and msg = "Two One Nine Two"
 //encrypted msg is: "ºuôz¤2è@}]" = ba75f47a84a48d32e88d060e1b407d5d (hex)
