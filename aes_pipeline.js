@@ -29,4 +29,3 @@ export function runPipeline(blockMatrix, roundKeyMatrix) {
 
     return states;
 }
-
