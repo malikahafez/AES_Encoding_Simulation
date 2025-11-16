@@ -76,7 +76,7 @@ states.forEach((state, index) => {
     for (let r = 0; r < 4; r++) {
         const row = [];
         for (let c = 0; c < 4; c++) {
-            row.push((state[c][r] ?? 0).toString(16).padStart(2, '0').toUpperCase());
+            row.push((state[r][c] ?? 0).toString(16).padStart(2, '0').toUpperCase());
         }
         console.log(row.join(' '));
     }
