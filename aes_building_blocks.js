@@ -162,6 +162,69 @@ function mixColumns(col, mixMatrix){
     return res;
 }
 
+//KEY EXPANSION FOR AES-128
+// Round constants for AES-128
+const rCon = [
+    0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36
+];
+
+function rotWord(word) {
+    // Rotate word left by 1 byte
+    return [word[1], word[2], word[3], word[0]];
+}
+
+function subWord(word) {
+    // Apply S-box to each byte in word
+    return word.map(byte => sBox[byte]);
+}
+
+export function keyExpansion(keyMatrix) {
+    // Takes initial key matrix (4x4) and generates 11 round keys (including initial)
+    // Returns array of 11 matrices
+    const roundKeys = [];
+    
+    // Round 0 is the original key
+    roundKeys.push(JSON.parse(JSON.stringify(keyMatrix)));
+    
+    // Convert matrix to word array (column-major)
+    let w = [];
+    for (let col = 0; col < 4; col++) {
+        w.push([keyMatrix[0][col], keyMatrix[1][col], keyMatrix[2][col], keyMatrix[3][col]]);
+    }
+    
+    // Generate 40 more words (4 words per round * 10 rounds)
+    for (let i = 4; i < 44; i++) {
+        let temp = [...w[i - 1]];
+        
+        if (i % 4 === 0) {
+            // Apply RotWord, SubWord, and XOR with round constant
+            temp = rotWord(temp);
+            temp = subWord(temp);
+            temp[0] ^= rCon[(i / 4) - 1];
+        }
+        
+        // XOR with word from 4 positions back
+        w[i] = [];
+        for (let j = 0; j < 4; j++) {
+            w[i][j] = w[i - 4][j] ^ temp[j];
+        }
+    }
+    
+    // Convert words back to matrices (one for each round)
+    for (let round = 1; round <= 10; round++) {
+        const roundKey = [[], [], [], []];
+        for (let col = 0; col < 4; col++) {
+            const wordIndex = round * 4 + col;
+            for (let row = 0; row < 4; row++) {
+                roundKey[row][col] = w[wordIndex][row];
+            }
+        }
+        roundKeys.push(roundKey);
+    }
+    
+    return roundKeys;
+}
+
 //EXPORTED FUNCTIONS TO BE USED
 export function paddingIfNeeded(str) {
     //handle emojis too - utf-8

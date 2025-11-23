@@ -3,13 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <script src="aes_building_blocks.js" ></script> -->
-    <!-- <script src = "aes_pipeline.js" type="module"></script> -->
-     <script src = "importTest.js" type="module"></script>
-
-    <title>AES Encryption</title>
+    <link rel="stylesheet" href="style.css">
+    <title>AES Encryption Simulator</title>
 </head>
 <body>
-    
+    <div class="container">
+        <h1>AES Encryption Simulator</h1>
+        
+        <!-- Input Section -->
+        <div class="input-section">
+            <h2>Input Configuration</h2>
+            
+            <div class="input-group">
+                <label>
+                    <input type="radio" name="dataMode" value="default" checked>
+                    Use Default Data
+                </label>
+                <label>
+                    <input type="radio" name="dataMode" value="custom">
+                    Custom Input
+                </label>
+            </div>
+            
+            <div id="customInputs" style="display: none;">
+                <div class="input-field">
+                    <label for="messageInput">Message (16 characters):</label>
+                    <input type="text" id="messageInput" maxlength="16" placeholder="Enter 16 characters">
+                </div>
+                
+                <div class="input-field">
+                    <label for="keyInput">Key (16 characters):</label>
+                    <input type="text" id="keyInput" maxlength="16" placeholder="Enter 16 characters">
+                </div>
+            </div>
+            
+            <div class="default-info">
+                <p><strong>Default Message:</strong> "Two One Nine Two"</p>
+                <p><strong>Default Key:</strong> "Thats my Kung Fu"</p>
+                <p style="font-size: 0.9em; color: #888; margin-top: 10px;">
+                    ℹ️ This default key will generate the standard AES-128 test vectors
+                </p>
+            </div>
+        </div>
+
+        <!-- Mode Selection -->
+        <div class="mode-section">
+            <h2>Simulation Mode</h2>
+            <div class="mode-buttons">
+                <button id="individualBtn" class="mode-btn active">Individual Building Blocks</button>
+                <button id="pipelineBtn" class="mode-btn">Pipeline Mode</button>
+            </div>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="controls">
+            <button id="startBtn" class="btn btn-primary">Start Simulation</button>
+            <button id="resetBtn" class="btn btn-secondary">Reset</button>
+        </div>
+
+        <!-- Individual Mode Section -->
+        <div id="individualMode" class="simulation-section">
+            <h2>Individual Building Blocks</h2>
+            <div class="step-controls">
+                <button class="step-btn" data-step="addRoundKey">Add Round Key</button>
+                <button class="step-btn" data-step="subBytes">Substitute Bytes</button>
+                <button class="step-btn" data-step="shiftRows">Shift Rows</button>
+                <button class="step-btn" data-step="mixColumns">Mix Columns</button>
+            </div>
+            
+            <div id="individualOutput" class="output-area">
+                <div class="state-display">
+                    <h3>Current State</h3>
+                    <div id="currentState" class="matrix-display"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pipeline Mode Section -->
+        <div id="pipelineMode" class="simulation-section" style="display: none;">
+            <h2>Full AES-128 Encryption - 10 Rounds</h2>
+            
+            <!-- Round Keys Display -->
+            <div class="round-keys-section">
+                <h3>Generated Round Keys</h3>
+                <div id="roundKeysDisplay" class="round-keys-container"></div>
+            </div>
+            
+            <div class="pipeline-controls">
+                <button id="prevStepBtn" class="btn btn-secondary">← Previous Step</button>
+                <button id="nextStepBtn" class="btn btn-primary">Next Step →</button>
+                <button id="autoRunBtn" class="btn btn-secondary">Auto Run All</button>
+            </div>
+            
+            <div id="pipelineOutput" class="output-area">
+                <div id="currentRoundDisplay" class="current-round-display">
+                    <h3 id="roundTitle">Waiting to start...</h3>
+                    <div class="round-info">
+                        <div class="info-box">
+                            <h4>Current Round Key</h4>
+                            <div id="currentRoundKey" class="matrix-display-small"></div>
+                        </div>
+                        <div class="info-box">
+                            <h4>Current State</h4>
+                            <div id="currentStateDisplay" class="matrix-display-small"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="stepProgress" class="step-progress"></div>
+            </div>
+        </div>
+
+        <!-- Status Messages -->
+        <div id="statusMessage" class="status-message"></div>
+    </div>
+
+    <script type="module" src="main.js"></script>
 </body>
 </html>
