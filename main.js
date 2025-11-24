@@ -171,10 +171,11 @@ function displayRoundKeys(roundKeys) {
 }
 
 function matrixToHexString(matrix) {
-    // Convert matrix to hex string in row-major order
+    // Convert matrix to hex string in column-major order (AES standard)
+    // Read column by column: col0, col1, col2, col3
     let hex = '';
-    for (let row = 0; row < 4; row++) {
-        for (let col = 0; col < 4; col++) {
+    for (let col = 0; col < 4; col++) {
+        for (let row = 0; row < 4; row++) {
             hex += matrix[col][row].toString(16).toUpperCase().padStart(2, '0') + ' ';
         }
     }
@@ -336,11 +337,12 @@ function createMatrixHTML(matrix, label = '', compact = false) {
     
     html += '<table class="matrix-table">';
     
-    // Display in row-major for visualization (transpose of column-major storage)
+    // Display matrix correctly: matrix is stored as matrix[col][row]
+    // To display it properly, we show each column as a row in the table
     for (let row = 0; row < 4; row++) {
         html += '<tr>';
         for (let col = 0; col < 4; col++) {
-            const value = matrix[col][row];
+            const value = matrix[row][col];
             const hex = value.toString(16).toUpperCase().padStart(2, '0');
             html += `<td>${hex}</td>`;
         }
