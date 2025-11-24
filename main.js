@@ -257,7 +257,7 @@ function updateProgress(currentStep) {
     progressDiv.innerHTML = `
         <h4>Progress: Step ${currentStep + 1} of ${total}</h4>
         <div style="background: #ddd; height: 20px; border-radius: 10px; overflow: hidden; margin-top: 10px;">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            <div style="background: linear-gradient(135deg, #ff85a2 0%, #d63384 100%); 
                         height: 100%; width: ${percentage}%; transition: width 0.3s;"></div>
         </div>
         <div class="progress-indicator">
