@@ -27,8 +27,8 @@
             
             <div id="customInputs" style="display: none;">
                 <div class="input-field">
-                    <label for="messageInput">Message (16 characters):</label>
-                    <input type="text" id="messageInput" maxlength="16" placeholder="Enter 16 characters">
+                    <label for="messageInput">Message (any length):</label>
+                    <input type="text" id="messageInput" placeholder="Enter message (multiple of 16 bytes will be split/padded)">
                 </div>
                 
                 <div class="input-field">
@@ -93,6 +93,11 @@
                 <button id="prevStepBtn" class="btn btn-secondary">← Previous Step</button>
                 <button id="nextStepBtn" class="btn btn-primary">Next Step →</button>
                 <button id="autoRunBtn" class="btn btn-secondary">Auto Run All</button>
+                <div style="display:flex; align-items:center; gap:10px; margin-left:12px;">
+                    <button id="prevBlockBtn" class="btn btn-secondary" title="Previous Block">⟵ Block</button>
+                    <span id="blockIndicator" style="font-weight:700; color:#d63384;">Block 1/1</span>
+                    <button id="nextBlockBtn" class="btn btn-secondary" title="Next Block">Block ⟶</button>
+                </div>
             </div>
             
             <div id="pipelineOutput" class="output-area">

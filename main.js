@@ -16,6 +16,9 @@ let appState = {
     message: "Two One Nine Two",
     key: "Thats my Kung Fu",
     currentMatrix: null,
+    messageMatrices: null,
+    currentBlockIndex: 0,
+    totalBlocks: 1,
     keyMatrix: null,
     pipelineStates: null,
     currentPipelineStep: 0,
@@ -56,6 +59,12 @@ function setupEventListeners() {
         radio.addEventListener('change', handleDataModeChange);
     });
 
+    // Block navigation buttons (pipeline)
+    const prevBlockBtn = document.getElementById('prevBlockBtn');
+    const nextBlockBtn = document.getElementById('nextBlockBtn');
+    if (prevBlockBtn) prevBlockBtn.addEventListener('click', handlePrevBlock);
+    if (nextBlockBtn) nextBlockBtn.addEventListener('click', handleNextBlock);
+
     individualBtn.addEventListener('click', () => switchMode('individual'));
     pipelineBtn.addEventListener('click', () => switchMode('pipeline'));
     
@@ -93,9 +102,13 @@ function startSimulation() {
     if (appState.dataMode === 'custom') {
         appState.message = messageInput.value;
         appState.key = keyInput.value;
-        
-        if (appState.message.length !== 16 || appState.key.length !== 16) {
-            showStatus('Error: Both message and key must be exactly 16 characters!', 'error');
+        // Allow messages of any length > 0, but key must be exactly 16 characters for AES-128
+        if (!appState.message || appState.message.length === 0) {
+            showStatus('Error: Message cannot be empty!', 'error');
+            return;
+        }
+        if (!appState.key || appState.key.length !== 16) {
+            showStatus('Error: Key must be exactly 16 characters for AES-128!', 'error');
             return;
         }
     } else {
@@ -104,14 +117,19 @@ function startSimulation() {
     }
     
     try {
-        // Convert to matrices
-        const messageMatrices = stringToASCIImatrix(appState.message);
-        const keyMatrices = stringToASCIImatrix(appState.key);
-        
-        // Use first block
-        appState.currentMatrix = JSON.parse(JSON.stringify(messageMatrices[0]));
-        appState.keyMatrix = JSON.parse(JSON.stringify(keyMatrices[0]));
-        appState.individualState = JSON.parse(JSON.stringify(messageMatrices[0]));
+    // Convert to matrices
+    const messageMatrices = stringToASCIImatrix(appState.message);
+    const keyMatrices = stringToASCIImatrix(appState.key);
+
+    // Store matrices (message may contain multiple 16-byte blocks)
+    appState.messageMatrices = messageMatrices;
+    appState.totalBlocks = messageMatrices.length;
+    appState.currentBlockIndex = 0;
+
+    // Use first block as starting point
+    appState.currentMatrix = JSON.parse(JSON.stringify(messageMatrices[0]));
+    appState.keyMatrix = JSON.parse(JSON.stringify(keyMatrices[0]));
+    appState.individualState = JSON.parse(JSON.stringify(messageMatrices[0]));
         
         console.log('Initial Message Matrix:', appState.currentMatrix);
         console.log('Initial Key Matrix:', appState.keyMatrix);
@@ -223,8 +241,9 @@ function displayPipelineStep(stepIndex) {
     
     const stateInfo = appState.fullAESResult.states[stepIndex];
     
-    // Update title
-    document.getElementById('roundTitle').textContent = stateInfo.description;
+    // Update title (include block info when multiple blocks present)
+    const blockInfo = appState.totalBlocks && appState.totalBlocks > 1 ? `Block ${appState.currentBlockIndex + 1}/${appState.totalBlocks} - ` : '';
+    document.getElementById('roundTitle').textContent = blockInfo + stateInfo.description;
     
     // Highlight current round key
     document.querySelectorAll('.round-key-item').forEach(item => {
@@ -247,6 +266,47 @@ function displayPipelineStep(stepIndex) {
     // Show status
     const totalSteps = appState.fullAESResult.states.length;
     showStatus(`Step ${stepIndex + 1}/${totalSteps}: ${stateInfo.description}`, 'info');
+}
+
+// -- Block navigation (for messages split into multiple 16-byte blocks) --
+function handlePrevBlock() {
+    if (!appState.messageMatrices || appState.totalBlocks <= 1) return;
+    if (appState.currentBlockIndex > 0) {
+        appState.currentBlockIndex--;
+        // set current matrix to new block and re-run AES
+        appState.currentMatrix = JSON.parse(JSON.stringify(appState.messageMatrices[appState.currentBlockIndex]));
+        appState.individualState = JSON.parse(JSON.stringify(appState.currentMatrix));
+        appState.fullAESResult = runFullAES(appState.currentMatrix, appState.keyMatrix);
+        appState.roundKeys = appState.fullAESResult.roundKeys;
+        appState.currentPipelineStep = 0;
+        displayRoundKeys(appState.roundKeys);
+        updateBlockIndicator();
+        displayPipelineStep(0);
+        showStatus(`Switched to block ${appState.currentBlockIndex + 1}/${appState.totalBlocks}`, 'info');
+    }
+}
+
+function handleNextBlock() {
+    if (!appState.messageMatrices || appState.totalBlocks <= 1) return;
+    if (appState.currentBlockIndex < appState.totalBlocks - 1) {
+        appState.currentBlockIndex++;
+        // set current matrix to new block and re-run AES
+        appState.currentMatrix = JSON.parse(JSON.stringify(appState.messageMatrices[appState.currentBlockIndex]));
+        appState.individualState = JSON.parse(JSON.stringify(appState.currentMatrix));
+        appState.fullAESResult = runFullAES(appState.currentMatrix, appState.keyMatrix);
+        appState.roundKeys = appState.fullAESResult.roundKeys;
+        appState.currentPipelineStep = 0;
+        displayRoundKeys(appState.roundKeys);
+        updateBlockIndicator();
+        displayPipelineStep(0);
+        showStatus(`Switched to block ${appState.currentBlockIndex + 1}/${appState.totalBlocks}`, 'info');
+    }
+}
+
+function updateBlockIndicator() {
+    const el = document.getElementById('blockIndicator');
+    if (!el) return;
+    el.textContent = `Block ${appState.currentBlockIndex + 1}/${appState.totalBlocks}`;
 }
 
 function updateProgress(currentStep) {
@@ -355,6 +415,9 @@ function createMatrixHTML(matrix, label = '', compact = false) {
 
 function resetSimulation() {
     appState.currentMatrix = null;
+    appState.messageMatrices = null;
+    appState.currentBlockIndex = 0;
+    appState.totalBlocks = 1;
     appState.keyMatrix = null;
     appState.pipelineStates = null;
     appState.currentPipelineStep = 0;
@@ -383,6 +446,9 @@ function resetSimulation() {
     
     const stepProgress = document.getElementById('stepProgress');
     if (stepProgress) stepProgress.innerHTML = '';
+    // reset block indicator
+    const blockIndicator = document.getElementById('blockIndicator');
+    if (blockIndicator) blockIndicator.textContent = 'Block 1/1';
     
     // Disable individual step buttons
     stepButtons.forEach(btn => btn.disabled = true);
